@@ -20,6 +20,13 @@ class PlayScene extends Phaser.Scene {
     super("PlayScene");
   }
 
+  preload() {
+    this.load.image("sky", "assets/sky.png");
+    this.load.image("dev", "assets/dev.png");
+    this.load.image("fix", "assets/fix.png");
+    this.load.image("bug", "assets/bug.png");
+  }
+
   create() {
     //  A simple background for our game
     this.add.image(400, 300, "sky");
@@ -58,11 +65,10 @@ class PlayScene extends Phaser.Scene {
     function destroyBug(fix, bug) {
       bug.destroy();
       fix.destroy();
-
       //  Add and update the score
       score += 10;
       scoreText.setText("Score: " + score);
-      if (score % 150 == 0 && lives < 10) {
+      if (score % 70 == 0 && lives < 10) {
         lives++;
         livesText.setText("lives: " + lives);
       }
@@ -75,13 +81,18 @@ class PlayScene extends Phaser.Scene {
         fontSize: "50px",
         fill: "#ff0000",
       });
-      this.game.destroy();
+      resetValues();
+      this.game.scene.dump();
+      this.scene.start("GameOverScene");
     }
 
     // send a new bug in
     let randomMistake = Phaser.Math.Between(1, 1000);
     if (randomMistake > 990 && !newBugOut) {
       let randomX = Phaser.Math.Between(-130, 130);
+
+      //  Add and update the score
+
       let randomY = Phaser.Math.Between(-280, 300);
       let bug = bugs.create(400, 300, "bug");
       bug.setVelocity(randomX, randomY);
@@ -152,6 +163,12 @@ class PlayScene extends Phaser.Scene {
       if (lives < 1) {
         gameOver = true;
       }
+    }
+
+    function resetValues() {
+      lives = 10;
+      gameOver = false;
+      score = 0;
     }
   }
 }
