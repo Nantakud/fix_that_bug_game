@@ -6,11 +6,10 @@ class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("logo", "assets/logo.png");
+    this.load.image("cover", "assets/cover.png");
   }
   create() {
-    this.game.scene.dump();
-    this.add.image(400, 300, "logo");
+    this.add.image(400, 300, "cover");
     this.input.keyboard.once("keydown", () => {
       this.scene.start("PlayScene");
     });

@@ -21,20 +21,34 @@ class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("sky", "assets/sky.png");
-    this.load.image("dev", "assets/dev.png");
+    this.load.image("background", "assets/background.png");
+    this.load.spritesheet("dev", "assets/dev_sprite.png", {
+      frameWidth: 85,
+      frameHeight: 85,
+    });
     this.load.image("fix", "assets/fix.png");
     this.load.image("bug", "assets/bug.png");
   }
 
   create() {
     //  A simple background for our game
-    this.add.image(400, 300, "sky");
+    this.add.image(400, 300, "background");
 
     // The player and its settings
-    player = this.physics.add.image(400, 300, "dev");
+    player = this.physics.add.sprite(400, 300, "dev");
     player.setAngularVelocity(angularVelocity);
     player.rotation = true;
+
+    //  the player animations
+    this.anims.create({
+      key: "move",
+      frames: this.anims.generateFrameNumbers("dev", {
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
 
     //Input Events
     cursors = this.input.keyboard.createCursorKeys();
@@ -48,15 +62,17 @@ class PlayScene extends Phaser.Scene {
     bugs = this.physics.add.group();
 
     //  The score
-    scoreText = this.add.text(16, 16, "score: 0", {
+    scoreText = this.add.text(16, 0, "score: 0", {
       fontSize: "32px",
-      fill: "#000",
+      fontFamily: "Ceviche One",
+      fill: "#83189d",
     });
 
     // The lives
-    livesText = this.add.text(560, 16, "lives: " + lives, {
+    livesText = this.add.text(700, 0, "lives: " + lives, {
       fontSize: "32px",
-      fill: "#000",
+      fontFamily: "Ceviche One",
+      fill: "#83189d",
     });
 
     //handle collisions
@@ -77,14 +93,11 @@ class PlayScene extends Phaser.Scene {
 
   update() {
     if (gameOver) {
-      this.add.text(300, 300, "GAME OVER!", {
-        fontSize: "50px",
-        fill: "#ff0000",
-      });
       resetValues();
-      this.game.scene.dump();
       this.scene.start("GameOverScene");
     }
+
+    player.anims.play("move", true);
 
     // send a new bug in
     let randomMistake = Phaser.Math.Between(1, 1000);
