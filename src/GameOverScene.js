@@ -5,13 +5,13 @@ class GameOverScene extends Phaser.Scene {
     super("GameOverScene");
   }
   preload() {
-    this.load.image("closure", "assets/closure_2.png");
+    this.load.image("closure", "assets/closure.png");
   }
 
   create() {
     this.add.image(400, 300, "closure");
 
-    this.input.keyboard.once("keydown", () => {
+    this.input.keyboard.once("keydown-ENTER", () => {
       this.scene.start("PreloadScene");
     });
   }
