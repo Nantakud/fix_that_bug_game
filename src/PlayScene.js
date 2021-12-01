@@ -21,13 +21,15 @@ class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "assets/background.png");
+    this.load.image("background", "assets/background_2.png");
     this.load.spritesheet("dev", "assets/dev_sprite.png", {
       frameWidth: 85,
       frameHeight: 85,
     });
     this.load.image("fix", "assets/fix.png");
     this.load.image("bug", "assets/bug.png");
+    this.load.audio("bug", "assets/bug.wav");
+    this.load.audio("fix", "assets/fix.wav");
   }
 
   create() {
@@ -57,22 +59,24 @@ class PlayScene extends Phaser.Scene {
 
     //The dev weapon
     weapons = this.physics.add.group();
+    this.sound.add("fix", { rate: 1 });
 
     //The enemies
     bugs = this.physics.add.group();
+    this.sound.add("bug", { rate: 1 });
 
     //  The score
     scoreText = this.add.text(16, 0, "score: 0", {
       fontSize: "32px",
       fontFamily: "Ceviche One",
-      fill: "#83189d",
+      fill: "#b3347b",
     });
 
     // The lives
     livesText = this.add.text(700, 0, "lives: " + lives, {
       fontSize: "32px",
       fontFamily: "Ceviche One",
-      fill: "#83189d",
+      fill: "#b3347b",
     });
 
     //handle collisions
@@ -81,6 +85,7 @@ class PlayScene extends Phaser.Scene {
     function destroyBug(fix, bug) {
       bug.destroy();
       fix.destroy();
+      this.sound.play("fix");
       //  Add and update the score
       score += 10;
       scoreText.setText("Score: " + score);
@@ -95,6 +100,7 @@ class PlayScene extends Phaser.Scene {
     if (gameOver) {
       resetValues();
       this.scene.start("GameOverScene");
+      this.sound.stopAll();
     }
 
     player.anims.play("move", true);
@@ -107,6 +113,7 @@ class PlayScene extends Phaser.Scene {
       //  Add and update the score
 
       let randomY = Phaser.Math.Between(-280, 300);
+      this.sound.play("bug");
       let bug = bugs.create(400, 300, "bug");
       bug.setVelocity(randomX, randomY);
       bug.angle = player.angle;
@@ -116,7 +123,7 @@ class PlayScene extends Phaser.Scene {
       //avoid to have two bugs coming out at the same time
       newBugOut = true;
       this.time.addEvent({
-        delay: 300,
+        delay: 400,
         callback: () => {
           newBugOut = false;
         },
